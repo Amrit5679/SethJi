@@ -45,6 +45,8 @@ function* productSaga({ type, payload }) {
         const state = yield select();
         const result = yield call(firebase.getProducts, payload);
 
+        console.log("Get products called");
+        
         if (result.products.length === 0) {
           handleError('No items found.');
         } else {

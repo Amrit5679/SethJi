@@ -19,7 +19,7 @@ const Products = () => {
     isLoading: state.app.loading,
     products: state.products
   }));
-
+  console.log(store.filteredProducts);
   return (
     <Boundary>
       <ProductsNavbar

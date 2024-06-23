@@ -18,6 +18,7 @@ const Footer = () => {
           <span>
             Developed by
             {' '}
+            <a target='_blank' href="www.linkedin.com/in/amrit-mishra-1b8bb518a">Amrit Mishra</a> and
             <a target="_blank" href="www.linkedin.com/in/anurag-mishra-840619217">ANURAG MISHRA</a>
           </span>
         </strong>

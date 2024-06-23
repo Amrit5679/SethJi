@@ -6,7 +6,10 @@ import firebaseConfig from "./config";
 
 class Firebase {
   constructor() {
-    app.initializeApp(firebaseConfig);
+    if (!app.length) {
+      app.initializeApp(firebaseConfig);
+      // firebase.initializeApp({});
+   }
 
     this.storage = app.storage();
     this.db = app.firestore();
@@ -250,6 +253,65 @@ class Firebase {
   saveOrder = (orderDetails) => {
     return this.db.collection("orders").add(orderDetails);
   };
+
+  getOrders = (lastRefKey) => {
+    let didTimeout = false;
+
+    return new Promise((resolve, reject) => {
+      (async () => {
+        if (lastRefKey) {
+          try {
+            const query = this.db
+              .collection("orders")
+              .orderBy(app.firestore.FieldPath.documentId())
+              .startAfter(lastRefKey)
+              .limit(12);
+
+            const snapshot = await query.get();
+            const orders = [];
+            snapshot.forEach((doc) =>
+              orders.push({ id: doc.id, ...doc.data() })
+            );
+            const lastKey = snapshot.docs[snapshot.docs.length - 1];
+
+            resolve({ orders, lastKey });
+          } catch (e) {
+            reject(e?.message || ":( Failed to fetch orders.");
+          }
+        } else {
+          const timeout = setTimeout(() => {
+            didTimeout = true;
+            reject(new Error("Request timeout, please try again"));
+          }, 15000);
+
+          try {
+            const totalQuery = await this.db.collection("orders").get();
+            const total = totalQuery.docs.length;
+            const query = this.db
+              .collection("orders")
+              .orderBy(app.firestore.FieldPath.documentId())
+              .limit(12);
+            const snapshot = await query.get();
+
+            clearTimeout(timeout);
+            if (!didTimeout) {
+              const orders = [];
+              snapshot.forEach((doc) =>
+                orders.push({ id: doc.id, ...doc.data() })
+              );
+              const lastKey = snapshot.docs[snapshot.docs.length - 1];
+
+              resolve({ orders, lastKey, total });
+            }
+          } catch (e) {
+            if (didTimeout) return;
+            reject(e?.message || ":( Failed to fetch orders.");
+          }
+        }
+      })();
+    });
+  };
+
 
   generateKey = () => this.db.collection("products").doc().id;
 
