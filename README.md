@@ -16,7 +16,7 @@ Create an `.env` file and add the following variables.
 ```
 // SAMPLE CONFIG .env, you should put the actual config details found on your project settings
 
-VITE_FIREBASE_API_KEY=AIzaKJgkjhSdfSgkjhdkKJdkjowf
+VITE_FIREBASE_API_KEY=api_key
 VITE_FIREBASE_AUTH_DOMAIN=yourauthdomin.firebaseapp.com
 VITE_FIREBASE_DB_URL=https://yourdburl.firebaseio.com
 VITE_FIREBASE_PROJECT_ID=yourproject-id
